@@ -7,6 +7,7 @@ están en `docs/informes-testing/`.
 | --- | --- | --- | --- | --- |
 | 1 | 2026-11-23 | T1–T11 (app completa) | 0 fallos · 6 observaciones | APROBADO → publicado en `main` |
 | 2 | 2026-11-23 | D8.4, D3.10 y D7.8 (directrices endurecidas a partir de las observaciones de la ronda 1) | 0 fallos · 5 observaciones | APROBADO → publicado en `main` |
+| Producción | 2026-11-23 | Verificación D10 en https://prueba-agentes-nextjs.vercel.app | 0 fallos · 4 observaciones · D10.5 manual | APROBADO |
 
 ## Decisiones del Orquestador
 
@@ -26,4 +27,6 @@ están en `docs/informes-testing/`.
   - Si faltaran las variables de entorno, `src/proxy.ts` daría un 500 antes de llegar a la acción. Se acepta: las variables están configuradas en Vercel y es un fallo de despliegue, no de la app.
   - El mensaje de login con Supabase caído ("Revisa los datos…") se acepta: es `{ ok:false }` en español.
   - El Orquestador actualiza las guías de los agentes y la especificación con el nuevo nombre de la migración.
+- 2026-11-23 · Tras la ronda 2, el Orquestador carga 6 citas de demostración ficticias (nombres "Demo/Prueba/Ficticio", teléfonos 600 000 1xx) para que el panel no esté vacío, y mueve las funciones de Vercel a cdg1 (París), junto a la base de datos.
+- 2026-11-23 · La verificación de producción se interrumpió una vez por el límite de uso de la API y se reanudó desde donde se quedó.
 - 2026-11-23 · El Orquestador crea el usuario de prueba del personal (`taller@example.com`, dominio reservado para ejemplos) con su fila en `staff`. La contraseña se generó y se cifró con bcrypt en local; no está en el repositorio.
