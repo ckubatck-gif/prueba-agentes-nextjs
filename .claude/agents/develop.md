@@ -37,7 +37,7 @@ src/
     validation.ts           esquemas zod y normalizadores (funciones PURAS)
     types.ts                tipos compartidos
   proxy.ts                  refresco de sesión y protección de /panel
-supabase/migrations/        SQL numerado: 0001_init.sql, 0002_…sql
+supabase/migrations/        SQL con la versión aplicada delante: 20261123203616_0001_init.sql, <versión>_0002_….sql
 supabase/tests/             comprobaciones SQL de RLS que ejecuta Testing
 tests/                      tests de Vitest (*.test.ts)
 ```
@@ -68,6 +68,7 @@ tests/                      tests de Vitest (*.test.ts)
 
 - Cada cambio de esquema es un archivo nuevo en `supabase/migrations/` (no edites uno ya aplicado) y se
   aplica con la herramienta MCP de Supabase `apply_migration` sobre el proyecto `udanowdiqvymughhxglm`.
+  Después, renombra el archivo con la versión que devuelve `list_migrations` (`<versión>_<nombre>.sql`, D3.10).
 - **RLS activado en todas las tablas** de `public`. Por defecto, nadie ve nada; abre solo lo necesario.
 - Los datos personales de los clientes (`appointments`) **no** son legibles por `anon`. El público solo
   reserva y consulta huecos a través de funciones `security definer` que devuelven lo mínimo.

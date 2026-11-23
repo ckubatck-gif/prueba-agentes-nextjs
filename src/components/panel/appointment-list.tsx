@@ -69,7 +69,7 @@ function AppointmentCard({ appointment }: { appointment: PanelAppointment }) {
           <dd className="font-display text-base font-bold tracking-wider">{formatPlate(appointment.plate)}</dd>
           {appointment.email ? (
             <>
-              <dt className="text-steel">Email</dt>
+              <dt className="text-steel">Correo</dt>
               <dd className="break-all">{appointment.email}</dd>
             </>
           ) : null}

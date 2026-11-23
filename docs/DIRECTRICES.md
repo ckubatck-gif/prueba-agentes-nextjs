@@ -39,7 +39,7 @@ Cada una indica **cómo la comprueba Testing**.
 | D3.7 | Funciones `security definer` con `set search_path = ''`, y `execute` revocado a `public` | Revisar migraciones y `pg_proc.proconfig` |
 | D3.8 | `get_advisors` (security) sin avisos de nivel ERROR | Herramienta MCP de Supabase |
 | D3.9 | Las funciones públicas no devuelven datos personales (nombre, teléfono, email, matrícula) | Revisar la firma de `taken_slots` y `get_booking` |
-| D3.10 | El esquema está versionado en `supabase/migrations/` y coincide con lo aplicado | `list_migrations` frente a los archivos |
+| D3.10 | El esquema está versionado en `supabase/migrations/` y coincide con lo aplicado. Cada archivo se llama `<versión aplicada>_<nombre>.sql` (p. ej. `20261123203616_0001_init.sql`), como espera la CLI de Supabase | `list_migrations` frente a los nombres y el contenido de los archivos *(endurecida en ronda 2)* |
 
 ## D4 · Validación de datos (doble: servidor y base de datos)
 
@@ -84,6 +84,7 @@ Cada una indica **cómo la comprueba Testing**.
 | D7.5 | Sin desbordes horizontales a 360 px (sin anchos fijos > 360 px) | Revisar clases |
 | D7.6 | Tras reservar se muestra un código de reserva y se puede consultar en `/reserva/[codigo]` | Leer código |
 | D7.7 | Aviso visible de que es una demo y no hay que introducir datos reales | Leer portada |
+| D7.8 | Sin anglicismos evitables en la interfaz: "correo electrónico" (o "correo"), no "email"; "contraseña", no "password" | `grep -rniE 'e-?mail' src/components src/app src/lib/validation.ts src/lib/errors.ts` y revisar que ninguna coincidencia sea texto visible (etiquetas, placeholders, mensajes). Quedan fuera los atributos HTML estándar (`type`, `name`, `inputMode`, `autoComplete`) y los nombres de campo en código *(añadida en ronda 2; comprobación aclarada por el Orquestador)* |
 
 ## D8 · Calidad de código
 
@@ -92,7 +93,7 @@ Cada una indica **cómo la comprueba Testing**.
 | D8.1 | Sin `any` ni `@ts-ignore` en `src/` | `grep -rnE ':\s*any\b\|as any\|@ts-ignore' src` → sin resultados |
 | D8.2 | Sin `console.log` en `src/` | `grep -rn "console.log" src` → sin resultados |
 | D8.3 | `lib/supabase/server.ts` importa `server-only` y ningún componente `'use client'` importa `lib/supabase` | `grep` |
-| D8.4 | Las Server Actions devuelven `{ ok, … }` tipado y no lanzan errores de Postgres al usuario | Leer `src/app/actions/` |
+| D8.4 | Las Server Actions devuelven `{ ok, … }` tipado y no lanzan errores de Postgres al usuario. **Ninguna acción lanza excepciones**: si Supabase no responde, faltan variables de entorno o falla una lectura auxiliar (p. ej. `staff`), la acción captura el error y devuelve `{ ok: false, error }` en español. Única excepción: el `redirect()` de Next tras un login/logout correcto | Leer `src/app/actions/` y lo que llaman; test que simule el fallo de Supabase *(añadida en ronda 2)* |
 | D8.5 | Ningún archivo de `src/` pasa de 250 líneas | `find src -name '*.ts*' \| xargs wc -l` |
 | D8.6 | Código (nombres) en inglés; interfaz en español | Revisión |
 

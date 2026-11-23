@@ -75,8 +75,8 @@ export const bookingSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
-    .max(254, { error: "El email es demasiado largo." })
-    .pipe(z.union([z.literal(""), z.email({ error: "Escribe un email válido o déjalo vacío." })]))
+    .max(254, { error: "El correo electrónico es demasiado largo." })
+    .pipe(z.union([z.literal(""), z.email({ error: "Escribe un correo electrónico válido o déjalo vacío." })]))
     .transform((value) => (value === "" ? null : value)),
   plate: z
     .string()
@@ -94,7 +94,7 @@ export type BookingInput = z.infer<typeof bookingSchema>;
 export const availabilitySchema = z.object({ date: isoDateSchema });
 
 export const signInSchema = z.object({
-  email: z.string().trim().pipe(z.email({ error: "Escribe un email válido." })),
+  email: z.string().trim().pipe(z.email({ error: "Escribe un correo electrónico válido." })),
   password: z.string().min(1, { error: "Escribe la contraseña." }).max(128, { error: "Contraseña demasiado larga." }),
 });
 

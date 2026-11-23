@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { signIn } from "@/app/actions/auth";
 import { TextField } from "@/components/form/text-field";
 
-/** Email + contraseña con Supabase Auth. Los errores llegan traducidos desde la Server Action. */
+/** Correo electrónico y contraseña con Supabase Auth. Los errores llegan traducidos desde la Server Action. */
 export function LoginForm() {
   const [state, formAction, pending] = useActionState(signIn, null);
   const [email, setEmail] = useState("");
@@ -21,7 +21,7 @@ export function LoginForm() {
       <TextField
         id="login-email"
         name="email"
-        label="Email"
+        label="Correo electrónico"
         type="email"
         autoComplete="username"
         required

@@ -37,9 +37,9 @@ export function errorStep(code: string | null): "time" | "date" | null {
 export function translateAuthError(code: string | null | undefined): string {
   switch (code) {
     case "invalid_credentials":
-      return "Email o contraseña incorrectos.";
+      return "Correo electrónico o contraseña incorrectos.";
     case "email_not_confirmed":
-      return "Este usuario todavía no ha confirmado su email.";
+      return "Este usuario todavía no ha confirmado su correo electrónico.";
     case "over_request_rate_limit":
     case "over_email_send_rate_limit":
       return "Demasiados intentos. Espera unos minutos y vuelve a probar.";

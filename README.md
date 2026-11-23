@@ -3,9 +3,17 @@
 Web de **cita previa para un taller mecánico** ficticio ("Taller Demo"). Es una demo: no hay que escribir
 datos reales.
 
+**Demo en producción:** https://prueba-agentes-nextjs.vercel.app · Panel del taller: `/panel`
+(el usuario y la contraseña de prueba se facilitan con la entrega, no están en el repositorio).
+
+**Equipo de agentes:** orquestador en [`CLAUDE.md`](CLAUDE.md), subagentes en
+[`.claude/agents/develop.md`](.claude/agents/develop.md) y [`.claude/agents/testing.md`](.claude/agents/testing.md),
+directrices de Testing en [`docs/DIRECTRICES.md`](docs/DIRECTRICES.md) y registro de rondas en
+[`docs/REGISTRO-AGENTES.md`](docs/REGISTRO-AGENTES.md).
+
 - **Clientes**, sin registrarse: eligen servicio, día laborable y hora libre, dejan sus datos y reciben un
   **código de reserva** para consultar el estado de la cita en `/reserva/[codigo]`.
-- **Personal del taller**, con email y contraseña: entra en `/panel`, ve el resumen del día, filtra las
+- **Personal del taller**, con correo electrónico y contraseña: entra en `/panel`, ve el resumen del día, filtra las
   citas por estado y las confirma, completa o cancela.
 
 Reglas: de lunes a viernes; citas a las 09, 10, 11, 12, 15, 16 y 17 h; sin horas pasadas; hasta 60 días
@@ -16,7 +24,7 @@ vista; una cita por hueco (las canceladas lo liberan); como máximo 3 citas futu
 
 - **Next.js 16** (App Router, TypeScript estricto, Tailwind CSS 4, Cache Components). La sesión se refresca
   en `src/proxy.ts` (la antigua convención `middleware.ts` ya no se usa).
-- **Supabase**: Postgres con RLS en todas las tablas y Auth (email + contraseña) vía `@supabase/ssr`.
+- **Supabase**: Postgres con RLS en todas las tablas y Auth (correo electrónico y contraseña) vía `@supabase/ssr`.
   La app usa **solo la clave publicable** y la sesión del usuario.
 - **Vercel**: despliegue y un cron diario que llama a `/api/keepalive` para que Supabase no se pause.
 - **zod** para validar en el servidor y **Vitest** para los tests.
@@ -59,7 +67,10 @@ Van en `.env.local` (ignorado por git) y en Vercel (Production y Preview). En el
 ## Base de datos
 
 El esquema está versionado en `supabase/migrations/` y se aplica en orden (en este proyecto, con la
-herramienta MCP de Supabase `apply_migration`):
+herramienta MCP de Supabase `apply_migration`). Cada archivo se llama `<versión aplicada>_<nombre>.sql`,
+como espera la CLI de Supabase: la migración inicial es `20261123203616_0001_init.sql`, que corresponde a
+la versión `20261123203616` (`0001_init`) registrada en la base de datos. Una migración ya aplicada no se
+edita: los cambios van en un archivo nuevo.
 
 - `services` (lectura pública de los activos), `staff` (quién es personal) y `appointments` (sin acceso
   directo para `anon`; el personal solo puede cambiar la columna `status`).
@@ -87,9 +98,10 @@ src/
     actions/           Server Actions (booking.ts, auth.ts, panel.ts): validan con zod y devuelven { ok, … }
   components/          interfaz (servidor por defecto; cliente solo donde hay estado o eventos)
   lib/                 lógica pura con tests (schedule, validation, format, status, errors, panel)
+                       y action-guard (ninguna Server Action lanza: devuelve { ok: false, error })
     supabase/          clientes de servidor y de proxy, y consultas (server-only)
   proxy.ts             refresco de sesión y redirección de /panel a /login sin sesión
-supabase/migrations/   SQL numerado
+supabase/migrations/   SQL versionado: <versión aplicada>_<nombre>.sql
 supabase/tests/        comprobaciones SQL de RLS
 tests/                 tests de Vitest
 vercel.json            cron diario a /api/keepalive
@@ -108,3 +120,10 @@ El proyecto lo construye un equipo de tres agentes de IA con un bucle de revisi�
 Cada ronda es Develop → Testing. Si Testing rechaza, Develop recibe la lista literal de fallos. Nada llega
 a `main` sin un informe APROBADO. El historial está en `docs/REGISTRO-AGENTES.md` y los informes, en
 `docs/informes-testing/`.
+
+## Limitaciones conocidas
+
+- No tiene en cuenta los **festivos**: se puede pedir cita, por ejemplo, el 25 de diciembre si es laborable.
+- No envía correos ni SMS: el cliente consulta el estado con su código de reserva.
+- Supabase pausa los proyectos gratuitos tras una semana sin actividad; el cron diario de `/api/keepalive`
+  genera actividad para reducir ese riesgo, pero no es una garantía del plan gratuito.

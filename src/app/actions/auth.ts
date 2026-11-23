@@ -1,13 +1,28 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { guardAction } from "@/lib/action-guard";
 import { translateAuthError } from "@/lib/errors";
 import { createClient } from "@/lib/supabase/server";
 import type { ActionResult } from "@/lib/types";
 import { readField, signInSchema, toFieldErrors } from "@/lib/validation";
 
-/** Inicia sesión con Supabase Auth (email + contraseña). Si va bien, lleva al panel. */
+/** Inicia sesión con Supabase Auth (correo electrónico y contraseña). Si va bien, lleva al panel. */
 export async function signIn(_previous: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  const result = await guardAction("auth.signIn", () => startSession(formData));
+  if (!result.ok) return result;
+  // redirect() lanza una excepción interna de Next: va fuera de guardAction para que nadie la capture.
+  redirect("/panel");
+}
+
+/** Cierra la sesión y vuelve a /login. */
+export async function signOut(): Promise<ActionResult> {
+  const result = await guardAction("auth.signOut", endSession);
+  if (!result.ok) return result;
+  redirect("/login");
+}
+
+async function startSession(formData: FormData): Promise<ActionResult> {
   const parsed = signInSchema.safeParse({
     email: readField(formData, "email"),
     password: readField(formData, "password"),
@@ -19,18 +34,15 @@ export async function signIn(_previous: ActionResult | null, formData: FormData)
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { ok: false, error: translateAuthError(error.code) };
-
-  redirect("/panel");
+  return { ok: true, data: null };
 }
 
-/** Cierra la sesión y vuelve a /login. */
-export async function signOut(): Promise<ActionResult> {
+async function endSession(): Promise<ActionResult> {
   const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
   if (error) {
     console.error("[auth] signOut falló", error.code);
     return { ok: false, error: "No se ha podido cerrar la sesión. Inténtalo de nuevo." };
   }
-
-  redirect("/login");
+  return { ok: true, data: null };
 }

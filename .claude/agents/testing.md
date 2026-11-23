@@ -58,7 +58,7 @@ VEREDICTO: APROBADO | RECHAZADO
 | … | … | ⚠️ | … |
 
 ## Fallos que Develop tiene que corregir
-1. [D3.2] supabase/migrations/0001_init.sql:42 — la política `appointments_select` permite `anon`.
+1. [D3.2] supabase/migrations/20261123203616_0001_init.sql:42 — la política `appointments_select` permite `anon`.
    Esperado: ninguna política para anon. Comprobar: la consulta de arriba devuelve 0 filas.
 
 ## Observaciones (no bloquean)

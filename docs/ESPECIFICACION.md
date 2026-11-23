@@ -46,7 +46,7 @@ CitaTaller es la web de cita previa de un taller mecánico (ficticio: "Taller De
 | ID | Tarea | Criterio de hecho |
 | --- | --- | --- |
 | T1 | Dependencias: `@supabase/ssr`, `@supabase/supabase-js`, `zod`, `server-only`; dev: `vitest`. Script `"test": "vitest run"`. `.env.example`. | `npm test` arranca |
-| T2 | Migración `0001_init.sql`: tipos, tablas, índices, RLS, políticas, grants por columna, funciones y datos de `services`. Aplicarla con MCP. `supabase/tests/rls.sql` con las comprobaciones de D3. | D3 entero |
+| T2 | Migración inicial (`supabase/migrations/20261123203616_0001_init.sql`; nombre con la versión aplicada desde la ronda 2): tipos, tablas, índices, RLS, políticas, grants por columna, funciones y datos de `services`. Aplicarla con MCP. `supabase/tests/rls.sql` con las comprobaciones de D3. | D3 entero |
 | T3 | `lib/schedule.ts` y `lib/validation.ts` (puras) con sus tests. | D4.2–D4.4, D5.1–D5.5 |
 | T4 | Clientes de Supabase (`lib/supabase/server.ts`, `lib/supabase/proxy.ts`) y `src/proxy.ts`. | D6.1, D6.5, D8.3 |
 | T5 | Portada `/`: cabecera, aviso de demo, servicios desde la BD, formulario de reserva por pasos (servicio → día → hora libre → datos) con Server Actions `getAvailability` y `createBooking`. Caja "¿Ya tienes cita?" que lleva a `/reserva/[codigo]`. | D4.1, D5.7, D7 |

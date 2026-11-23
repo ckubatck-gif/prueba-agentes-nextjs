@@ -1,5 +1,5 @@
 // Generado con la herramienta MCP de Supabase `generate_typescript_types` a partir de
-// supabase/migrations/0001_init.sql. Se han quitado los genéricos auxiliares que no se usan.
+// supabase/migrations/20261123203616_0001_init.sql. Se han quitado los genéricos auxiliares que no se usan.
 // Si cambia el esquema, vuelve a generarlo.
 
 export type Json =

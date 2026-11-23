@@ -1,5 +1,6 @@
 "use server";
 
+import { guardAction } from "@/lib/action-guard";
 import { GENERIC_ERROR, errorStep, extractDbErrorCode, translateDbError } from "@/lib/errors";
 import { checkSlot, getFreeSlots, isDateInRange, isWorkingDay } from "@/lib/schedule";
 import { createClient } from "@/lib/supabase/server";
@@ -8,6 +9,18 @@ import { availabilitySchema, bookingSchema, readField, toFieldErrors } from "@/l
 
 /** Horas libres de un día laborable (solo horas: nada personal). */
 export async function getAvailability(date: string): Promise<ActionResult<Availability>> {
+  return guardAction("booking.getAvailability", () => loadAvailability(date));
+}
+
+/** Valida con zod, repite las reglas de horario y reserva con la función SQL book_appointment. */
+export async function createBooking(
+  _previous: ActionResult<BookingCreated> | null,
+  formData: FormData,
+): Promise<ActionResult<BookingCreated>> {
+  return guardAction("booking.createBooking", () => bookAppointment(formData));
+}
+
+async function loadAvailability(date: string): Promise<ActionResult<Availability>> {
   const parsed = availabilitySchema.safeParse({ date });
   if (!parsed.success) return { ok: false, error: "Elige una fecha válida." };
 
@@ -27,11 +40,7 @@ export async function getAvailability(date: string): Promise<ActionResult<Availa
   return { ok: true, data: { date: day, slots: getFreeSlots(day, data.map((row) => row.slot), now) } };
 }
 
-/** Valida con zod, repite las reglas de horario y reserva con la función SQL book_appointment. */
-export async function createBooking(
-  _previous: ActionResult<BookingCreated> | null,
-  formData: FormData,
-): Promise<ActionResult<BookingCreated>> {
+async function bookAppointment(formData: FormData): Promise<ActionResult<BookingCreated>> {
   const parsed = bookingSchema.safeParse({
     serviceSlug: readField(formData, "serviceSlug"),
     date: readField(formData, "date"),

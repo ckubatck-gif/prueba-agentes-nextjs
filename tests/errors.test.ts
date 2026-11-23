@@ -32,7 +32,8 @@ describe("traducción de errores", () => {
   });
 
   it("traduce los errores de inicio de sesión", () => {
-    expect(translateAuthError("invalid_credentials")).toBe("Email o contraseña incorrectos.");
+    expect(translateAuthError("invalid_credentials")).toBe("Correo electrónico o contraseña incorrectos.");
+    expect(translateAuthError("email_not_confirmed")).toMatch(/correo electrónico/);
     expect(translateAuthError("over_request_rate_limit")).toMatch(/Demasiados intentos/);
     expect(translateAuthError(undefined)).toMatch(/No se ha podido iniciar sesión/);
   });

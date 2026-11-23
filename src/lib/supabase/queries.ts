@@ -12,7 +12,10 @@ import { createClient, type ServerSupabaseClient } from "./server";
 
 const PANEL_LIMIT = 200;
 
-/** Error de lectura sin datos personales; lo recoge error.tsx. */
+/**
+ * Error de lectura sin datos personales. En una página lo recoge error.tsx; en una Server Action lo
+ * convierte guardAction en `{ ok: false }` (D8.4).
+ */
 function fail(context: string, code: string | undefined): never {
   console.error(`[supabase] ${context} falló`, code || "sin código");
   throw new Error("No se han podido cargar los datos.");

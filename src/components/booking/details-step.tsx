@@ -64,7 +64,7 @@ export function DetailsStep({ values, onChange, choice, state, formAction, pendi
         <TextField
           id="booking-email"
           name="email"
-          label="Email"
+          label="Correo electrónico"
           optional
           type="email"
           inputMode="email"

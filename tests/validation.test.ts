@@ -130,6 +130,18 @@ describe("bookingSchema (D4.1–D4.4)", () => {
     expect(bookingSchema.parse({ ...validBooking, email: "   " }).email).toBeNull();
   });
 
+  it("los errores del correo dicen «correo electrónico», no «email» (D7.8)", () => {
+    const booking = bookingSchema.safeParse({ ...validBooking, email: "maria@" });
+    const signIn = signInSchema.safeParse({ email: "taller", password: "x" });
+    expect(booking.success || signIn.success).toBe(false);
+    if (booking.success || signIn.success) return;
+    const messages = [toFieldErrors(booking.error).email, toFieldErrors(signIn.error).email];
+    for (const message of messages) {
+      expect(message).toMatch(/correo electrónico/);
+      expect(message).not.toMatch(/e-?mail/i);
+    }
+  });
+
   it("comentario de 500 caracteres como máximo (los saltos de línea CRLF cuentan como uno)", () => {
     expect(bookingSchema.safeParse({ ...validBooking, notes: "x".repeat(500) }).success).toBe(true);
     expect(bookingSchema.safeParse({ ...validBooking, notes: "x".repeat(501) }).success).toBe(false);

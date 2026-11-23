@@ -1,6 +1,7 @@
 "use server";
 
 import { refresh } from "next/cache";
+import { guardAction } from "@/lib/action-guard";
 import { translateDbError } from "@/lib/errors";
 import { STATUS_LABELS, canTransition } from "@/lib/status";
 import { getCurrentStaff } from "@/lib/supabase/queries";
@@ -10,11 +11,18 @@ import { readField, updateStatusSchema } from "@/lib/validation";
 
 type StatusChange = { id: string; status: AppointmentStatus };
 
-/** Cambia el estado de una cita. Solo personal del taller; nunca toca los datos del cliente. */
+/**
+ * Cambia el estado de una cita. Solo personal del taller; nunca toca los datos del cliente.
+ * Si falla la lectura de `staff` o Supabase no responde, devuelve `{ ok: false }` en vez de lanzar.
+ */
 export async function updateStatus(
   _previous: ActionResult<StatusChange> | null,
   formData: FormData,
 ): Promise<ActionResult<StatusChange>> {
+  return guardAction("panel.updateStatus", () => changeStatus(formData));
+}
+
+async function changeStatus(formData: FormData): Promise<ActionResult<StatusChange>> {
   const parsed = updateStatusSchema.safeParse({
     id: readField(formData, "id"),
     status: readField(formData, "status"),
