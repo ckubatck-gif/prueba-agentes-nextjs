@@ -1,3 +1,9 @@
+# AGENTS.md
+
+Las instrucciones del agente orquestador están en **`CLAUDE.md`** (Claude Code las carga solo; en Codex,
+léelo primero). Los subagentes están en `.claude/agents/develop.md` y `.claude/agents/testing.md`, y las
+directrices que Testing exige están en `docs/DIRECTRICES.md`.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know
